@@ -1,6 +1,6 @@
 # IMDbLinkDecoder
 Decodes IMDb links to movie title and release date.
-Useful, if you have a tons of IMDb links, and you don't want to visit every URL to find out the title of the movies.
+Useful, if you have lots of IMDb links, and you don't want to visit every URL to find out the title of the movies.
 Speed: 200 link/minute.
 
 ## Screenshots
