@@ -14,6 +14,7 @@ namespace IMDbLinkDecoder
     public partial class Form1 : Form
     {
         private List<string> imdbLinks = new List<string>();
+
         private int count = 0;
 
         public Form1()
@@ -37,22 +38,20 @@ namespace IMDbLinkDecoder
 
             foreach (string link in imdbLinks)
             {
-                string idString = link.Replace(" ", string.Empty);
-                Console.WriteLine(idString.Length);
+                string idString = "";
 
-                if(idString.Length > 0)
+                if (link.Length > 0)
                 {
-                    if (idString[idString.Length - 1].Equals('/'))
+                    if (link[link.Length - 1].Equals('/'))
                     {
-                        idString = idString.Remove(idString.Length - 1);
+                        idString = link.Remove(link.Length - 1);
                     }
 
-                    if (idString.Length > 9)
+                    if (link.Length > 9)
                     {
-                        idString = idString.Substring(idString.Length - 9);
+                        idString = link.Substring(link.Length - 9);
                     }
                 }
-                
 
                 Film f = await Task.Run(() => APICalls.FilmById(idString));
 
@@ -111,7 +110,9 @@ namespace IMDbLinkDecoder
         private void AddText(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbIn.Text))
+            {
                 tbIn.Text = "Enter IMDb links here...";
+            }
         }
     }
 }
