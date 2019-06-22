@@ -28,8 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.bGo = new System.Windows.Forms.Button();
+            this.bStart = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lSeparator = new System.Windows.Forms.Label();
+            this.tbSeparator = new System.Windows.Forms.TextBox();
+            this.cbInputLink = new System.Windows.Forms.CheckBox();
+            this.cbTMDb = new System.Windows.Forms.CheckBox();
+            this.cbDate = new System.Windows.Forms.CheckBox();
+            this.cbTitle = new System.Windows.Forms.CheckBox();
+            this.cbCounter = new System.Windows.Forms.CheckBox();
             this.lProgress = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tbIn = new System.Windows.Forms.TextBox();
@@ -41,25 +48,109 @@
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // bGo
+            // bStart
             // 
-            this.bGo.Location = new System.Drawing.Point(12, 12);
-            this.bGo.Name = "bGo";
-            this.bGo.Size = new System.Drawing.Size(75, 23);
-            this.bGo.TabIndex = 0;
-            this.bGo.Text = "Go";
-            this.bGo.UseVisualStyleBackColor = true;
-            this.bGo.Click += new System.EventHandler(this.bGo_Click);
+            this.bStart.Location = new System.Drawing.Point(12, 12);
+            this.bStart.Name = "bStart";
+            this.bStart.Size = new System.Drawing.Size(75, 23);
+            this.bStart.TabIndex = 0;
+            this.bStart.Text = "Start";
+            this.bStart.UseVisualStyleBackColor = true;
+            this.bStart.Click += new System.EventHandler(this.bStart_Click);
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.lSeparator);
+            this.panel1.Controls.Add(this.tbSeparator);
+            this.panel1.Controls.Add(this.cbInputLink);
+            this.panel1.Controls.Add(this.cbTMDb);
+            this.panel1.Controls.Add(this.cbDate);
+            this.panel1.Controls.Add(this.cbTitle);
+            this.panel1.Controls.Add(this.cbCounter);
             this.panel1.Controls.Add(this.lProgress);
-            this.panel1.Controls.Add(this.bGo);
+            this.panel1.Controls.Add(this.bStart);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 46);
             this.panel1.TabIndex = 1;
+            // 
+            // lSeparator
+            // 
+            this.lSeparator.AutoSize = true;
+            this.lSeparator.Location = new System.Drawing.Point(436, 16);
+            this.lSeparator.Name = "lSeparator";
+            this.lSeparator.Size = new System.Drawing.Size(56, 13);
+            this.lSeparator.TabIndex = 8;
+            this.lSeparator.Text = "Separator:";
+            // 
+            // tbSeparator
+            // 
+            this.tbSeparator.Location = new System.Drawing.Point(498, 13);
+            this.tbSeparator.Name = "tbSeparator";
+            this.tbSeparator.Size = new System.Drawing.Size(100, 20);
+            this.tbSeparator.TabIndex = 7;
+            this.tbSeparator.Text = " ";
+            // 
+            // cbInputLink
+            // 
+            this.cbInputLink.AutoSize = true;
+            this.cbInputLink.Checked = true;
+            this.cbInputLink.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbInputLink.Location = new System.Drawing.Point(361, 12);
+            this.cbInputLink.Name = "cbInputLink";
+            this.cbInputLink.Size = new System.Drawing.Size(69, 17);
+            this.cbInputLink.TabIndex = 6;
+            this.cbInputLink.Text = "Input link";
+            this.cbInputLink.UseVisualStyleBackColor = true;
+            // 
+            // cbTMDb
+            // 
+            this.cbTMDb.AutoSize = true;
+            this.cbTMDb.Checked = true;
+            this.cbTMDb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbTMDb.Location = new System.Drawing.Point(270, 12);
+            this.cbTMDb.Name = "cbTMDb";
+            this.cbTMDb.Size = new System.Drawing.Size(85, 17);
+            this.cbTMDb.TabIndex = 5;
+            this.cbTMDb.Text = "TMDb rating";
+            this.cbTMDb.UseVisualStyleBackColor = true;
+            // 
+            // cbDate
+            // 
+            this.cbDate.AutoSize = true;
+            this.cbDate.Checked = true;
+            this.cbDate.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbDate.Location = new System.Drawing.Point(215, 12);
+            this.cbDate.Name = "cbDate";
+            this.cbDate.Size = new System.Drawing.Size(49, 17);
+            this.cbDate.TabIndex = 4;
+            this.cbDate.Text = "Date";
+            this.cbDate.UseVisualStyleBackColor = true;
+            // 
+            // cbTitle
+            // 
+            this.cbTitle.AutoSize = true;
+            this.cbTitle.Checked = true;
+            this.cbTitle.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbTitle.Location = new System.Drawing.Point(163, 12);
+            this.cbTitle.Name = "cbTitle";
+            this.cbTitle.Size = new System.Drawing.Size(46, 17);
+            this.cbTitle.TabIndex = 3;
+            this.cbTitle.Text = "Title";
+            this.cbTitle.UseVisualStyleBackColor = true;
+            // 
+            // cbCounter
+            // 
+            this.cbCounter.AutoSize = true;
+            this.cbCounter.Checked = true;
+            this.cbCounter.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbCounter.Location = new System.Drawing.Point(93, 12);
+            this.cbCounter.Name = "cbCounter";
+            this.cbCounter.Size = new System.Drawing.Size(63, 17);
+            this.cbCounter.TabIndex = 2;
+            this.cbCounter.Text = "Counter";
+            this.cbCounter.UseVisualStyleBackColor = true;
             // 
             // lProgress
             // 
@@ -133,12 +224,19 @@
 
         #endregion
 
-        private System.Windows.Forms.Button bGo;
+        private System.Windows.Forms.Button bStart;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox tbIn;
         private System.Windows.Forms.TextBox tbOut;
         private System.Windows.Forms.Label lProgress;
+        private System.Windows.Forms.CheckBox cbInputLink;
+        private System.Windows.Forms.CheckBox cbTMDb;
+        private System.Windows.Forms.CheckBox cbDate;
+        private System.Windows.Forms.CheckBox cbTitle;
+        private System.Windows.Forms.CheckBox cbCounter;
+        private System.Windows.Forms.TextBox tbSeparator;
+        private System.Windows.Forms.Label lSeparator;
     }
 }
 
