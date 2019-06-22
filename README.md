@@ -4,5 +4,5 @@ Useful, if you have lots of IMDb links, and you don't want to visit every URL to
 Speed: 200 link/minute.
 
 ## Screenshots
-![image](https://user-images.githubusercontent.com/47695008/59603418-ade96c80-9109-11e9-9b44-25a802bc6844.png)
-![image](https://user-images.githubusercontent.com/47695008/59603515-e2f5bf00-9109-11e9-8ede-5ec84a3e2515.png)
+![image](https://user-images.githubusercontent.com/47695008/59968138-11720080-9535-11e9-80e2-b2cb0982fe75.png)
+![image](https://user-images.githubusercontent.com/47695008/59968157-5ac25000-9535-11e9-9fde-d37d9f3c1812.png)
