@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,15 +10,14 @@ namespace IMDbLinkDecoder
 {
     public partial class Form1 : Form
     {
-        private List<string> imdbLinks = new List<string>();
-
-        private int count = 0;
-
+        private readonly string inputPlaceholder = "Enter IMDb links here...";
         private bool going = false;
 
         public Form1()
         {
             InitializeComponent();
+
+            tbIn.Text = inputPlaceholder;
 
             tbIn.GotFocus += RemoveText;
             tbIn.LostFocus += AddText;
@@ -32,32 +28,24 @@ namespace IMDbLinkDecoder
 
         private async Task LoadFilms()
         {
-            string inText = tbIn.Text.Replace(" ", string.Empty);
+            string inputText = tbIn.Text.Replace(" ", string.Empty);
+            List<string> inputLines = new List<string>(inputText.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
 
-            imdbLinks = new List<string>(inText.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> idLines = new List<string>();
+            foreach (string line in inputLines)
+            {
+                idLines.Add("tt" + CleanStringOfNonDigits(line));
+            }
 
-            lProgress.Text = count++ + " / " + imdbLinks.Count;
+            int filmCount = 1;
 
-            foreach (string link in imdbLinks)
+            foreach (string id in idLines)
             {
                 if (!going) break;
 
-                string idString = link;
+                string filmLink = "imdb.com/title/" + id;
 
-                if (idString.Length > 0)
-                {
-                    if (idString[idString.Length - 1].Equals('/'))
-                    {
-                        idString = idString.Remove(idString.Length - 1);
-                    }
-
-                    if (idString.Length > 9)
-                    {
-                        idString = idString.Substring(idString.Length - 9);
-                    }
-                }
-
-                Film f = await Task.Run(() => APICalls.FilmById(idString));
+                Film f = await Task.Run(() => APICalls.GetFilmById(id));
 
                 List<string> elements = new List<string>();
 
@@ -67,7 +55,7 @@ namespace IMDbLinkDecoder
 
                     if (cbCounter.Checked)
                     {
-                        elements.Add(count.ToString());
+                        elements.Add(filmCount.ToString());
                     }
                     if (cbTitle.Checked)
                     {
@@ -83,7 +71,7 @@ namespace IMDbLinkDecoder
                     }
                     if (cbInputLink.Checked)
                     {
-                        elements.Add(link);
+                        elements.Add(filmLink);
                     }
                 }
                 else if (f.tv_results.Count > 0)
@@ -92,7 +80,7 @@ namespace IMDbLinkDecoder
 
                     if (cbCounter.Checked)
                     {
-                        elements.Add(count.ToString());
+                        elements.Add(filmCount.ToString());
                     }
                     if (cbTitle.Checked)
                     {
@@ -108,7 +96,7 @@ namespace IMDbLinkDecoder
                     }
                     if (cbInputLink.Checked)
                     {
-                        elements.Add(link);
+                        elements.Add(filmLink);
                     }
                 }
                 else if (f.tv_episode_results.Count > 0)
@@ -117,7 +105,7 @@ namespace IMDbLinkDecoder
 
                     if (cbCounter.Checked)
                     {
-                        elements.Add(count.ToString());
+                        elements.Add(filmCount.ToString());
                     }
                     if (cbTitle.Checked)
                     {
@@ -133,7 +121,7 @@ namespace IMDbLinkDecoder
                     }
                     if (cbInputLink.Checked)
                     {
-                        elements.Add(link);
+                        elements.Add(filmLink);
                     }
                 }
                 else if (f.person_results.Count > 0)
@@ -142,7 +130,7 @@ namespace IMDbLinkDecoder
 
                     if (cbCounter.Checked)
                     {
-                        elements.Add(count.ToString());
+                        elements.Add(filmCount.ToString());
                     }
                     if (cbTitle.Checked)
                     {
@@ -154,59 +142,56 @@ namespace IMDbLinkDecoder
                     }
                     if (cbInputLink.Checked)
                     {
-                        elements.Add(link);
+                        elements.Add(filmLink);
                     }
                 }
                 else if (f.tv_season_results.Count > 0)
                 {
                     if (cbCounter.Checked)
                     {
-                        elements.Add(count.ToString());
+                        elements.Add(filmCount.ToString());
                     }
                     if (cbInputLink.Checked)
                     {
-                        elements.Add("TV Season: " + link);
+                        elements.Add("TV Season: " + filmLink);
                     }
                 }
                 else
                 {
                     if (cbCounter.Checked)
                     {
-                        elements.Add(count.ToString());
+                        elements.Add(filmCount.ToString());
                     }
-                    elements.Add("Movie not found on TMDb: " + link);
+                    elements.Add("Movie not found on TMDb: " + filmLink);
                 }
 
-                for(int i = 0; i < elements.Count - 1; i++)
-                {
-                    tbOut.AppendText(elements[i] + tbSeparator.Text);
-                }
+                tbOut.AppendText(string.Join(tbSeparator.Text, elements) + "\r\n");
 
-                tbOut.AppendText(elements[elements.Count - 1] + "\r\n");
-
-                lProgress.Text = count++ + " / " + imdbLinks.Count;
+                lProgress.Text = filmCount + " / " + inputLines.Count + " (" + (filmCount * 100 / inputLines.Count) + " %)";
+                filmCount++;
 
                 await Task.Delay(140);
             }
-            stop();
+            Stop();
         }
 
-        private async void bStart_Click(object sender, EventArgs e)
+        private async void Start_Click(object sender, EventArgs e)
         {
             if (!going)
             {
-                start();
+                await StartAsync();
             }
             else
             {
-                stop();
+                Stop();
             } 
         }
 
-        private void start()
+        private async Task StartAsync()
         {
             going = true;
             bStart.Text = "Stop";
+
             cbCounter.Enabled = false;
             cbTitle.Enabled = false;
             cbDate.Enabled = false;
@@ -215,16 +200,14 @@ namespace IMDbLinkDecoder
             tbSeparator.Enabled = false;
 
             tbOut.Clear();
-            imdbLinks.Clear();
-            count = 0;
-
-            LoadFilms();
+            await LoadFilms();
         }
 
-        private void stop()
+        private void Stop()
         {
             going = false;
             bStart.Text = "Start";
+
             cbCounter.Enabled = true;
             cbTitle.Enabled = true;
             cbDate.Enabled = true;
@@ -233,9 +216,18 @@ namespace IMDbLinkDecoder
             tbSeparator.Enabled = true;
         }
 
+        private string CleanStringOfNonDigits(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return s;
+
+            Regex rxNonDigits = new Regex(@"[^\d]+");
+            string cleaned = rxNonDigits.Replace(s, "");
+            return cleaned;
+        }
+
         private void RemoveText(object sender, EventArgs e)
         {
-            if (tbIn.Text == "Enter IMDb links here...")
+            if (tbIn.Text == inputPlaceholder)
             {
                 tbIn.Text = "";
             }
@@ -245,7 +237,7 @@ namespace IMDbLinkDecoder
         {
             if (string.IsNullOrWhiteSpace(tbIn.Text))
             {
-                tbIn.Text = "Enter IMDb links here...";
+                tbIn.Text = inputPlaceholder;
             }
         }
     }

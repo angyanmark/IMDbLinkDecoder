@@ -13,7 +13,7 @@ namespace IMDbLinkDecoder
 
         private static RestClient client = new RestClient("https://api.themoviedb.org/3");
 
-        public static Film FilmById(string id)
+        public static Film GetFilmById(string id)
         {
             Film data = new Film();
 

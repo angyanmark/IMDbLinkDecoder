@@ -56,7 +56,7 @@
             this.bStart.TabIndex = 0;
             this.bStart.Text = "Start";
             this.bStart.UseVisualStyleBackColor = true;
-            this.bStart.Click += new System.EventHandler(this.bStart_Click);
+            this.bStart.Click += new System.EventHandler(this.Start_Click);
             // 
             // panel1
             // 
@@ -156,7 +156,7 @@
             // 
             this.lProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lProgress.AutoSize = true;
-            this.lProgress.Location = new System.Drawing.Point(715, 17);
+            this.lProgress.Location = new System.Drawing.Point(680, 17);
             this.lProgress.Name = "lProgress";
             this.lProgress.Size = new System.Drawing.Size(48, 13);
             this.lProgress.TabIndex = 1;
@@ -188,7 +188,6 @@
             this.tbIn.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.tbIn.Size = new System.Drawing.Size(266, 404);
             this.tbIn.TabIndex = 0;
-            this.tbIn.Text = "Enter IMDb links here...";
             // 
             // tbOut
             // 

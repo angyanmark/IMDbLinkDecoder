@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace IMDbLinkDecoder
 {
-
     public class Film
     {
         public List<Movie_Results> movie_results { get; set; }
@@ -96,5 +95,4 @@ namespace IMDbLinkDecoder
         public float popularity { get; set; }
         public string media_type { get; set; }
     }
-
 }
