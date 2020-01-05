@@ -169,8 +169,6 @@ namespace IMDbLinkDecoder
 
                 lProgress.Text = filmCount + " / " + inputLines.Count + " (" + (filmCount * 100 / inputLines.Count) + " %)";
                 filmCount++;
-
-                await Task.Delay(140);
             }
             Stop();
         }
