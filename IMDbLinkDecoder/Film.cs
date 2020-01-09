@@ -8,11 +8,11 @@ namespace IMDbLinkDecoder
 {
     public class Film
     {
-        public List<Movie_Results> movie_results { get; set; }
-        public List<Person_Results> person_results { get; set; }
-        public List<Tv_Results> tv_results { get; set; }
-        public List<Tv_Episode_Results> tv_episode_results { get; set; }
-        public List<object> tv_season_results { get; set; }
+        public List<Movie_Results> movie_results { get; set; } = new List<Movie_Results>();
+        public List<Person_Results> person_results { get; set; } = new List<Person_Results>();
+        public List<Tv_Results> tv_results { get; set; } = new List<Tv_Results>();
+        public List<Tv_Episode_Results> tv_episode_results { get; set; } = new List<Tv_Episode_Results>();
+        public List<object> tv_season_results { get; set; } = new List<object>();
     }
 
     public class Movie_Results

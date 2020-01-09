@@ -31,143 +31,31 @@ namespace IMDbLinkDecoder
             string inputText = tbIn.Text.Replace(" ", string.Empty);
             List<string> inputLines = new List<string>(inputText.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
 
-            List<string> idLines = new List<string>();
-            foreach (string line in inputLines)
+            List<Line> lines = new List<Line>();
+            foreach(var inputLine in inputLines)
             {
-                idLines.Add("tt" + CleanStringOfNonDigits(line));
+                lines.Add(new Line(inputLine));
             }
 
             int filmCount = 1;
 
-            foreach (string id in idLines)
+            OutputOptions options = new OutputOptions
+            {
+                Counter = cbCounter.Checked,
+                Title = cbTitle.Checked,
+                Date = cbDate.Checked,
+                TMDb = cbTMDb.Checked,
+                Link = cbInputLink.Checked,
+                Separator = tbSeparator.Text,
+            };
+
+            foreach (Line line in lines)
             {
                 if (!going) break;
 
-                string filmLink = "imdb.com/title/" + id;
+                tbOut.AppendText(await line.GetOutput(options, filmCount));
 
-                Film f = await Task.Run(() => APICalls.GetFilmById(id));
-
-                List<string> elements = new List<string>();
-
-                if (f.movie_results.Count > 0)
-                {
-                    Movie_Results mr = f.movie_results[0];
-
-                    if (cbCounter.Checked)
-                    {
-                        elements.Add(filmCount.ToString());
-                    }
-                    if (cbTitle.Checked)
-                    {
-                        elements.Add(mr.title);
-                    }
-                    if (cbDate.Checked)
-                    {
-                        elements.Add(mr.release_date);
-                    }
-                    if (cbTMDb.Checked)
-                    {
-                        elements.Add(mr.vote_average.ToString());
-                    }
-                    if (cbInputLink.Checked)
-                    {
-                        elements.Add(filmLink);
-                    }
-                }
-                else if (f.tv_results.Count > 0)
-                {
-                    Tv_Results tr = f.tv_results[0];
-
-                    if (cbCounter.Checked)
-                    {
-                        elements.Add(filmCount.ToString());
-                    }
-                    if (cbTitle.Checked)
-                    {
-                        elements.Add(tr.name);
-                    }
-                    if (cbDate.Checked)
-                    {
-                        elements.Add(tr.first_air_date);
-                    }
-                    if (cbTMDb.Checked)
-                    {
-                        elements.Add(tr.vote_average.ToString());
-                    }
-                    if (cbInputLink.Checked)
-                    {
-                        elements.Add(filmLink);
-                    }
-                }
-                else if (f.tv_episode_results.Count > 0)
-                {
-                    Tv_Episode_Results ter = f.tv_episode_results[0];
-
-                    if (cbCounter.Checked)
-                    {
-                        elements.Add(filmCount.ToString());
-                    }
-                    if (cbTitle.Checked)
-                    {
-                        elements.Add(ter.name);
-                    }
-                    if (cbDate.Checked)
-                    {
-                        elements.Add(ter.air_date);
-                    }
-                    if (cbTMDb.Checked)
-                    {
-                        elements.Add(ter.vote_average.ToString());
-                    }
-                    if (cbInputLink.Checked)
-                    {
-                        elements.Add(filmLink);
-                    }
-                }
-                else if (f.person_results.Count > 0)
-                {
-                    Person_Results pr = f.person_results[0];
-
-                    if (cbCounter.Checked)
-                    {
-                        elements.Add(filmCount.ToString());
-                    }
-                    if (cbTitle.Checked)
-                    {
-                        elements.Add(pr.name);
-                    }
-                    if (cbDate.Checked)
-                    {
-                        elements.Add(pr.known_for_department);
-                    }
-                    if (cbInputLink.Checked)
-                    {
-                        elements.Add(filmLink);
-                    }
-                }
-                else if (f.tv_season_results.Count > 0)
-                {
-                    if (cbCounter.Checked)
-                    {
-                        elements.Add(filmCount.ToString());
-                    }
-                    if (cbInputLink.Checked)
-                    {
-                        elements.Add("TV Season: " + filmLink);
-                    }
-                }
-                else
-                {
-                    if (cbCounter.Checked)
-                    {
-                        elements.Add(filmCount.ToString());
-                    }
-                    elements.Add("Movie not found on TMDb: " + filmLink);
-                }
-
-                tbOut.AppendText(string.Join(tbSeparator.Text, elements) + "\r\n");
-
-                lProgress.Text = filmCount + " / " + inputLines.Count + " (" + (filmCount * 100 / inputLines.Count) + " %)";
+                lProgress.Text = filmCount + " / " + lines.Count + " (" + (filmCount * 100 / lines.Count) + " %)";
                 filmCount++;
             }
             Stop();
@@ -212,15 +100,6 @@ namespace IMDbLinkDecoder
             cbTMDb.Enabled = true;
             cbInputLink.Enabled = true;
             tbSeparator.Enabled = true;
-        }
-
-        private string CleanStringOfNonDigits(string s)
-        {
-            if (string.IsNullOrEmpty(s)) return s;
-
-            Regex rxNonDigits = new Regex(@"[^\d]+");
-            string cleaned = rxNonDigits.Replace(s, "");
-            return cleaned;
         }
 
         private void RemoveText(object sender, EventArgs e)
