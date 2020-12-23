@@ -78,7 +78,7 @@
             // lSeparator
             // 
             this.lSeparator.AutoSize = true;
-            this.lSeparator.Location = new System.Drawing.Point(436, 16);
+            this.lSeparator.Location = new System.Drawing.Point(435, 17);
             this.lSeparator.Name = "lSeparator";
             this.lSeparator.Size = new System.Drawing.Size(56, 13);
             this.lSeparator.TabIndex = 8;
@@ -86,7 +86,7 @@
             // 
             // tbSeparator
             // 
-            this.tbSeparator.Location = new System.Drawing.Point(498, 13);
+            this.tbSeparator.Location = new System.Drawing.Point(497, 14);
             this.tbSeparator.Name = "tbSeparator";
             this.tbSeparator.Size = new System.Drawing.Size(100, 20);
             this.tbSeparator.TabIndex = 7;
@@ -97,7 +97,7 @@
             this.cbInputLink.AutoSize = true;
             this.cbInputLink.Checked = true;
             this.cbInputLink.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbInputLink.Location = new System.Drawing.Point(361, 12);
+            this.cbInputLink.Location = new System.Drawing.Point(360, 16);
             this.cbInputLink.Name = "cbInputLink";
             this.cbInputLink.Size = new System.Drawing.Size(69, 17);
             this.cbInputLink.TabIndex = 6;
@@ -109,7 +109,7 @@
             this.cbTMDb.AutoSize = true;
             this.cbTMDb.Checked = true;
             this.cbTMDb.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbTMDb.Location = new System.Drawing.Point(270, 12);
+            this.cbTMDb.Location = new System.Drawing.Point(269, 16);
             this.cbTMDb.Name = "cbTMDb";
             this.cbTMDb.Size = new System.Drawing.Size(85, 17);
             this.cbTMDb.TabIndex = 5;
@@ -121,7 +121,7 @@
             this.cbDate.AutoSize = true;
             this.cbDate.Checked = true;
             this.cbDate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbDate.Location = new System.Drawing.Point(215, 12);
+            this.cbDate.Location = new System.Drawing.Point(214, 16);
             this.cbDate.Name = "cbDate";
             this.cbDate.Size = new System.Drawing.Size(49, 17);
             this.cbDate.TabIndex = 4;
@@ -133,7 +133,7 @@
             this.cbTitle.AutoSize = true;
             this.cbTitle.Checked = true;
             this.cbTitle.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbTitle.Location = new System.Drawing.Point(163, 12);
+            this.cbTitle.Location = new System.Drawing.Point(162, 16);
             this.cbTitle.Name = "cbTitle";
             this.cbTitle.Size = new System.Drawing.Size(46, 17);
             this.cbTitle.TabIndex = 3;
@@ -145,7 +145,7 @@
             this.cbCounter.AutoSize = true;
             this.cbCounter.Checked = true;
             this.cbCounter.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCounter.Location = new System.Drawing.Point(93, 12);
+            this.cbCounter.Location = new System.Drawing.Point(93, 15);
             this.cbCounter.Name = "cbCounter";
             this.cbCounter.Size = new System.Drawing.Size(63, 17);
             this.cbCounter.TabIndex = 2;
