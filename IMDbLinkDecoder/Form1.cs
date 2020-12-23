@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -22,20 +20,16 @@ namespace IMDbLinkDecoder
             tbIn.GotFocus += RemoveText;
             tbIn.LostFocus += AddText;
 
-            tbIn.MaxLength = Int32.MaxValue; //2147483647
-            tbOut.MaxLength = Int32.MaxValue; //2147483647
+            tbIn.MaxLength = int.MaxValue;
+            tbOut.MaxLength = int.MaxValue;
         }
 
-        private async Task LoadFilms()
+        private async Task LoadFilmsAsync()
         {
             string inputText = tbIn.Text.Replace(" ", string.Empty);
-            List<string> inputLines = new List<string>(inputText.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries));
+            List<string> inputLines = new List<string>(inputText.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
 
-            List<Line> lines = new List<Line>();
-            foreach(var inputLine in inputLines)
-            {
-                lines.Add(new Line(inputLine));
-            }
+            var lines = inputLines.Select(inputLine => new Line(inputLine)).ToList();
 
             int filmCount = 1;
 
@@ -53,11 +47,12 @@ namespace IMDbLinkDecoder
             {
                 if (!going) break;
 
-                tbOut.AppendText(await line.GetOutput(options, filmCount));
+                tbOut.AppendText(await line.GetOutputAsync(options, filmCount));
 
-                lProgress.Text = filmCount + " / " + lines.Count + " (" + (filmCount * 100 / lines.Count) + " %)";
+                lProgress.Text = filmCount + " / " + lines.Count + " (" + (filmCount * 100 / lines.Count) + "%)";
                 filmCount++;
             }
+
             Stop();
         }
 
@@ -86,7 +81,7 @@ namespace IMDbLinkDecoder
             tbSeparator.Enabled = false;
 
             tbOut.Clear();
-            await LoadFilms();
+            await LoadFilmsAsync();
         }
 
         private void Stop()
@@ -106,7 +101,7 @@ namespace IMDbLinkDecoder
         {
             if (tbIn.Text == inputPlaceholder)
             {
-                tbIn.Text = "";
+                tbIn.Text = string.Empty;
             }
         }
 

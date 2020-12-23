@@ -50,7 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APICalls.cs" />
+    <Compile Include="TMDbService.cs" />
     <Compile Include="Film.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

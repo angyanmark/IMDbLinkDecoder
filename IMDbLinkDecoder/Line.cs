@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace IMDbLinkDecoder
@@ -16,6 +14,7 @@ namespace IMDbLinkDecoder
         }
 
         public string Text { get; }
+
         public string IdPretag
         {
             get
@@ -28,10 +27,11 @@ namespace IMDbLinkDecoder
                 }
                 catch (Exception)
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
+
         public string IdDigits
         {
             get
@@ -44,17 +44,13 @@ namespace IMDbLinkDecoder
                 }
                 catch (Exception)
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
         }
-        public string Id
-        {
-            get
-            {
-                return IdPretag + IdDigits;
-            }
-        }
+
+        public string Id => IdPretag + IdDigits;
+
         public string Link
         {
             get
@@ -69,33 +65,26 @@ namespace IMDbLinkDecoder
                 }
             }
         }
+
         public string LinkPretag
         {
             get
             {
-                string linkPretag;
                 switch (IdPretag)
                 {
                     case "tt":
-                        linkPretag = "title";
-                        break;
+                        return "title";
                     case "nm":
-                        linkPretag = "name";
-                        break;
+                        return "name";
                     default:
-                        linkPretag = "";
-                        break;
+                        return string.Empty;
                 }
-                return linkPretag;
             }
         }
-        public async Task<Film> GetFilm()
+
+        public async Task<string> GetOutputAsync(OutputOptions options, int filmCount)
         {
-            return await Task.Run(() => APICalls.GetFilmById(Id));
-        }
-        public async Task<string> GetOutput(OutputOptions options, int filmCount)
-        {
-            Film f = await GetFilm();
+            Film f = await TMDbService.GetFilmByIdAsync(Id);
 
             List<string> elements = new List<string>();
 
@@ -201,7 +190,7 @@ namespace IMDbLinkDecoder
                 }
             }
 
-            return string.Join(options.Separator, elements) + "\r\n";
+            return string.Join(options.Separator, elements) + Environment.NewLine;
         }
     }
 }
