@@ -1,6 +1,6 @@
 ﻿namespace IMDbLinkDecoder
 {
-    class OutputOptions
+    public class OutputOptions
     {
         public bool Counter { get; set; }
         public bool Title { get; set; }

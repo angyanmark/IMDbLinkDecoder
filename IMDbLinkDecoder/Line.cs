@@ -1,21 +1,24 @@
-﻿using System;
+﻿using IMDbLinkDecoder.Services;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace IMDbLinkDecoder
 {
-    class Line
+    public class Line
     {
         private readonly char[] digits = "0123456789".ToCharArray();
+        private readonly string dateFormat = "yyyy-MM-dd";
 
         public Line(string line)
         {
             Text = line;
         }
 
-        public string Text { get; }
+        private string Text { get; }
 
-        public string IdPretag
+        private string IdPretag
         {
             get
             {
@@ -32,7 +35,7 @@ namespace IMDbLinkDecoder
             }
         }
 
-        public string IdDigits
+        private string IdDigits
         {
             get
             {
@@ -49,15 +52,15 @@ namespace IMDbLinkDecoder
             }
         }
 
-        public string Id => IdPretag + IdDigits;
+        private string Id => IdPretag + IdDigits;
 
-        public string Link
+        private string Link
         {
             get
             {
                 if (Id.Length == 9)
                 {
-                    return "imdb.com/" + LinkPretag + "/" + Id + "/";
+                    return $"imdb.com/{LinkPretag}/{Id}/";
                 }
                 else
                 {
@@ -66,7 +69,7 @@ namespace IMDbLinkDecoder
             }
         }
 
-        public string LinkPretag
+        private string LinkPretag
         {
             get
             {
@@ -84,113 +87,126 @@ namespace IMDbLinkDecoder
 
         public async Task<string> GetOutputAsync(OutputOptions options, int filmCount)
         {
-            Film f = await TMDbService.GetFilmByIdAsync(Id);
+            var findContainer = await TMDbService.FindAsync(Id);
 
-            List<string> elements = new List<string>();
+            var elements = new List<string>();
 
             if (options.Counter)
             {
                 elements.Add(filmCount.ToString());
             }
 
-            if(f == null || (
-                f.movie_results.Count == 0 &&
-                f.tv_results.Count == 0 &&
-                f.tv_episode_results.Count == 0 &&
-                f.person_results.Count == 0 &&
-                f.tv_season_results.Count == 0 ))
+            if (findContainer.MovieResults.Any())
             {
-                elements.Add("Not found on TMDb: " + Link);
-            }
-            else if (f.movie_results.Count > 0)
-            {
-                Movie_Results mr = f.movie_results[0];
+                var searchMovie = findContainer.MovieResults.First();
 
                 if (options.Title)
                 {
-                    elements.Add(mr.title);
+                    elements.Add(searchMovie.Title);
                 }
                 if (options.Date)
                 {
-                    elements.Add(mr.release_date);
+                    elements.Add(searchMovie.ReleaseDate.Value.ToString(dateFormat));
                 }
                 if (options.TMDb)
                 {
-                    elements.Add(mr.vote_average.ToString());
+                    elements.Add(searchMovie.VoteAverage.ToString());
                 }
                 if (options.Link)
                 {
                     elements.Add(Link);
                 }
             }
-            else if (f.tv_results.Count > 0)
+            else if (findContainer.TvResults.Any())
             {
-                Tv_Results tr = f.tv_results[0];
+                var searchTv = findContainer.TvResults.First();
 
                 if (options.Title)
                 {
-                    elements.Add(tr.name);
+                    elements.Add(searchTv.Name);
                 }
                 if (options.Date)
                 {
-                    elements.Add(tr.first_air_date);
+                    elements.Add(searchTv.FirstAirDate.Value.ToString(dateFormat));
                 }
                 if (options.TMDb)
                 {
-                    elements.Add(tr.vote_average.ToString());
+                    elements.Add(searchTv.VoteAverage.ToString());
                 }
                 if (options.Link)
                 {
                     elements.Add(Link);
                 }
             }
-            else if (f.tv_episode_results.Count > 0)
+            else if (findContainer.TvEpisode.Any())
             {
-                Tv_Episode_Results ter = f.tv_episode_results[0];
+                var searchTvEpisode = findContainer.TvEpisode.First();
 
                 if (options.Title)
                 {
-                    elements.Add(ter.name);
+                    elements.Add(searchTvEpisode.Name);
                 }
                 if (options.Date)
                 {
-                    elements.Add(ter.air_date);
+                    elements.Add(searchTvEpisode.AirDate.Value.ToString(dateFormat));
                 }
                 if (options.TMDb)
                 {
-                    elements.Add(ter.vote_average.ToString());
+                    elements.Add(searchTvEpisode.VoteAverage.ToString());
                 }
                 if (options.Link)
                 {
                     elements.Add(Link);
                 }
             }
-            else if (f.person_results.Count > 0)
+            else if (findContainer.PersonResults.Any())
             {
-                Person_Results pr = f.person_results[0];
+                var findPerson = findContainer.PersonResults.First();
 
                 if (options.Title)
                 {
-                    elements.Add(pr.name);
+                    elements.Add(findPerson.Name);
                 }
                 if (options.Date)
                 {
-                    elements.Add(pr.known_for_department);
+                    elements.Add(findPerson.Gender.ToString());
+                }
+                if (options.TMDb)
+                {
+                    elements.Add(findPerson.KnownForDepartment);
                 }
                 if (options.Link)
                 {
                     elements.Add(Link);
                 }
             }
-            else if (f.tv_season_results.Count > 0)
+            else if (findContainer.TvSeason.Any())
             {
+                var findTvPerson = findContainer.TvSeason.First();
+
+                if (options.Title)
+                {
+                    elements.Add(findTvPerson.Name);
+                }
+                if (options.Date)
+                {
+                    elements.Add(findTvPerson.AirDate.Value.ToString(dateFormat));
+                }
+                if (options.TMDb)
+                {
+                    elements.Add(findTvPerson.SeasonNumber.ToString());
+                }
                 if (options.Link)
                 {
                     elements.Add(Link);
                 }
+            }
+            else
+            {
+                elements.Add($"Not found on TMDb: {Link}");
             }
 
-            return string.Join(options.Separator, elements) + Environment.NewLine;
+            return $"{string.Join(options.Separator, elements)}{Environment.NewLine}";
         }
     }
 }

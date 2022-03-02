@@ -9,7 +9,8 @@ namespace IMDbLinkDecoder
     public partial class Form1 : Form
     {
         private readonly string inputPlaceholder = "Enter IMDb links here...";
-        private bool going = false;
+
+        private bool Going { get; set; }
 
         public Form1()
         {
@@ -26,14 +27,14 @@ namespace IMDbLinkDecoder
 
         private async Task LoadFilmsAsync()
         {
-            string inputText = tbIn.Text.Replace(" ", string.Empty);
-            List<string> inputLines = new List<string>(inputText.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+            var inputText = tbIn.Text.Replace(" ", string.Empty);
+            var inputLines = new List<string>(inputText.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
 
-            var lines = inputLines.Select(inputLine => new Line(inputLine)).ToList();
+            var lines = inputLines.Select(inputLine => new Line(inputLine));
 
-            int filmCount = 1;
+            var filmCount = 1;
 
-            OutputOptions options = new OutputOptions
+            var options = new OutputOptions
             {
                 Counter = cbCounter.Checked,
                 Title = cbTitle.Checked,
@@ -43,13 +44,13 @@ namespace IMDbLinkDecoder
                 Separator = tbSeparator.Text,
             };
 
-            foreach (Line line in lines)
+            foreach (var line in lines)
             {
-                if (!going) break;
+                if (!Going) break;
 
                 tbOut.AppendText(await line.GetOutputAsync(options, filmCount));
 
-                lProgress.Text = filmCount + " / " + lines.Count + " (" + (filmCount * 100 / lines.Count) + "%)";
+                lProgress.Text = $"{filmCount} / {lines.Count()} ({filmCount * 100 / lines.Count()}%)";
                 filmCount++;
             }
 
@@ -58,7 +59,7 @@ namespace IMDbLinkDecoder
 
         private async void Start_Click(object sender, EventArgs e)
         {
-            if (!going)
+            if (!Going)
             {
                 await StartAsync();
             }
@@ -70,15 +71,10 @@ namespace IMDbLinkDecoder
 
         private async Task StartAsync()
         {
-            going = true;
+            Going = true;
             bStart.Text = "Stop";
 
-            cbCounter.Enabled = false;
-            cbTitle.Enabled = false;
-            cbDate.Enabled = false;
-            cbTMDb.Enabled = false;
-            cbInputLink.Enabled = false;
-            tbSeparator.Enabled = false;
+            SetOptionsEnabled(false);
 
             tbOut.Clear();
             await LoadFilmsAsync();
@@ -86,15 +82,20 @@ namespace IMDbLinkDecoder
 
         private void Stop()
         {
-            going = false;
+            Going = false;
             bStart.Text = "Start";
 
-            cbCounter.Enabled = true;
-            cbTitle.Enabled = true;
-            cbDate.Enabled = true;
-            cbTMDb.Enabled = true;
-            cbInputLink.Enabled = true;
-            tbSeparator.Enabled = true;
+            SetOptionsEnabled(true);
+        }
+
+        private void SetOptionsEnabled(bool enabled)
+        {
+            cbCounter.Enabled = enabled;
+            cbTitle.Enabled = enabled;
+            cbDate.Enabled = enabled;
+            cbTMDb.Enabled = enabled;
+            cbInputLink.Enabled = enabled;
+            tbSeparator.Enabled = enabled;
         }
 
         private void RemoveText(object sender, EventArgs e)
