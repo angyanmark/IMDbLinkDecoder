@@ -1,4 +1,4 @@
-﻿namespace IMDbLinkDecoder
+﻿namespace IMDbLinkDecoder.Models
 {
     public class OutputOptions
     {

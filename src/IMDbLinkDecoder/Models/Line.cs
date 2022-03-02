@@ -4,92 +4,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IMDbLinkDecoder
+namespace IMDbLinkDecoder.Models
 {
     public class Line
     {
         private readonly char[] digits = "0123456789".ToCharArray();
         private readonly string dateFormat = "yyyy-MM-dd";
 
+        private string Text { get; }
+
         public Line(string line)
         {
             Text = line;
         }
 
-        private string Text { get; }
-
-        private string IdPretag
-        {
-            get
-            {
-                int idStartIndex = Text.IndexOfAny(digits) - 2;
-                try
-                {
-                    string pretag = Text.Substring(idStartIndex, 2);
-                    return pretag;
-                }
-                catch (Exception)
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
-        private string IdDigits
-        {
-            get
-            {
-                int idStartIndex = Text.IndexOfAny(digits);
-                try
-                {
-                    string idDigits = Text.Substring(idStartIndex, 7);
-                    return idDigits;
-                }
-                catch (Exception)
-                {
-                    return string.Empty;
-                }
-            }
-        }
-
-        private string Id => IdPretag + IdDigits;
-
-        private string Link
-        {
-            get
-            {
-                if (Id.Length == 9)
-                {
-                    return $"imdb.com/{LinkPretag}/{Id}/";
-                }
-                else
-                {
-                    return Text;
-                }
-            }
-        }
-
-        private string LinkPretag
-        {
-            get
-            {
-                switch (IdPretag)
-                {
-                    case "tt":
-                        return "title";
-                    case "nm":
-                        return "name";
-                    default:
-                        return string.Empty;
-                }
-            }
-        }
-
         public async Task<string> GetOutputAsync(OutputOptions options, int filmCount)
         {
-            var findContainer = await TMDbService.FindAsync(Id);
+            var id = GetId();
+
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return string.Empty;
+            }
+
+            var findContainer = await TMDbService.FindAsync(id);
 
             var elements = new List<string>();
+
+            var link = GetLink();
 
             if (options.Counter)
             {
@@ -114,7 +56,7 @@ namespace IMDbLinkDecoder
                 }
                 if (options.Link)
                 {
-                    elements.Add(Link);
+                    elements.Add(link);
                 }
             }
             else if (findContainer.TvResults.Any())
@@ -135,7 +77,7 @@ namespace IMDbLinkDecoder
                 }
                 if (options.Link)
                 {
-                    elements.Add(Link);
+                    elements.Add(link);
                 }
             }
             else if (findContainer.TvEpisode.Any())
@@ -156,7 +98,7 @@ namespace IMDbLinkDecoder
                 }
                 if (options.Link)
                 {
-                    elements.Add(Link);
+                    elements.Add(link);
                 }
             }
             else if (findContainer.PersonResults.Any())
@@ -177,7 +119,7 @@ namespace IMDbLinkDecoder
                 }
                 if (options.Link)
                 {
-                    elements.Add(Link);
+                    elements.Add(link);
                 }
             }
             else if (findContainer.TvSeason.Any())
@@ -198,15 +140,70 @@ namespace IMDbLinkDecoder
                 }
                 if (options.Link)
                 {
-                    elements.Add(Link);
+                    elements.Add(link);
                 }
             }
             else
             {
-                elements.Add($"Not found on TMDb: {Link}");
+                elements.Add($"Not found on TMDb: {link}");
             }
 
             return $"{string.Join(options.Separator, elements)}{Environment.NewLine}";
+        }
+
+        private string GetId()
+        {
+            return $"{GetIdPretag()}{GetIdDigits()}";
+        }
+
+        private string GetIdPretag()
+        {
+            var idStartIndex = Text.IndexOfAny(digits) - 2;
+            try
+            {
+                var pretag = Text.Substring(idStartIndex, 2);
+                return pretag;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return string.Empty;
+            }
+        }
+
+        private string GetIdDigits()
+        {
+            var idStartIndex = Text.IndexOfAny(digits);
+            try
+            {
+                var idDigits = Text.Substring(idStartIndex, 7);
+                return idDigits;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return string.Empty;
+            }
+        }
+
+        private string GetLink()
+        {
+            var id = GetId();
+            return id.Length == 9
+                ? $"imdb.com/{GetLinkPretag()}/{id}/"
+                : Text;
+        }
+
+        private string GetLinkPretag()
+        {
+            var idPretag = GetIdPretag();
+            switch (idPretag)
+            {
+                case "tt":
+                    return "title";
+                case "nm":
+                    return "name";
+                default:
+                    return string.Empty;
+            }
         }
     }
 }
