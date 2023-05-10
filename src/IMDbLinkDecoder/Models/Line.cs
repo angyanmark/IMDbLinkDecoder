@@ -151,10 +151,8 @@ namespace IMDbLinkDecoder.Models
             return $"{string.Join(options.Separator, elements)}{Environment.NewLine}";
         }
 
-        private string GetId()
-        {
-            return $"{GetIdPretag()}{GetIdDigits()}";
-        }
+        private string GetId() =>
+            GetIdPretag() + GetIdDigits();
 
         private string GetIdPretag()
         {
